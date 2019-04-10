@@ -1,4 +1,4 @@
-import { Observable, of, from, fromEvent, Subject, BehaviorSubject, ReplaySubject } from 'rxjs'; 
+import { Observable, of, from, fromEvent, Subject, BehaviorSubject, ReplaySubject } from 'rxjs';
 
 import {
   map, filter, reduce
@@ -9,23 +9,32 @@ const l = console.log;
 
 // 1. Create a basic observable
 const observable$ = new Observable(observer => {
-  setTimeout(()=> {
+  setTimeout(() => {
     observer.next(5);
   }, 6000);
   observer.next(1);
-  observer.error(new Error('BAD!'));
+  //observer.error(new Error('BAD!'));
   observer.next(2);
-
+  observer.complete();
   return () => {
     l('deallocate resources');
   }
 })
 
-const subscription = observable$.subscribe(value => {
-  l(value);
-}, err => l(err.message));
+// const subscription = observable$.subscribe(value => {
+//   l(value);
+// }, err => l(err.message),
+//   () => l('completed'));
 
-setTimeout(()=> {
+const subscription = observable$.subscribe({
+  next: value => {
+    l(value);
+  },
+  error: err => l(err.message),
+  complete: () => l('completed')
+});
+
+setTimeout(() => {
   subscription.unsubscribe();
 }, 1000);
 
