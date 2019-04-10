@@ -1,44 +1,45 @@
-import { Observable, of, from, fromEvent, Subject, BehaviorSubject, ReplaySubject } from 'rxjs';
+import { Observable, of, from, fromEvent, Subject, BehaviorSubject, ReplaySubject, interval, timer } from 'rxjs';
 
 import {
-  map, filter, reduce
+  map, filter, reduce, take
 } from 'rxjs/operators'
 
 console.clear();
 const l = console.log;
 
 // 1. Create a basic observable
-const observable$ = new Observable(observer => {
-  setTimeout(() => {
-    observer.next(5);
-  }, 6000);
-  observer.next(1);
-  //observer.error(new Error('BAD!'));
-  observer.next(2);
-  observer.complete();
-  return () => {
-    l('deallocate resources');
-  }
-})
 
-// const subscription = observable$.subscribe(value => {
-//   l(value);
-// }, err => l(err.message),
-//   () => l('completed'));
+// const observable$ = new Observable(observer => {
+//   setTimeout(() => {
+//     observer.next(5);
+//   }, 6000);
+//   observer.next(1);
+//   //observer.error(new Error('BAD!'));
+//   observer.next(2);
+//   observer.complete();
+//   return () => {
+//     l('deallocate resources');
+//   }
+// })
 
-const subscription = observable$.subscribe({
-  next: value => {
-    l(value);
-  },
-  error: err => l(err.message),
-  complete: () => l('completed')
-});
+// // const subscription = observable$.subscribe(value => {
+// //   l(value);
+// // }, err => l(err.message),
+// //   () => l('completed'));
 
-setTimeout(() => {
-  subscription.unsubscribe();
-}, 1000);
+// const subscription = observable$.subscribe({
+//   next: value => {
+//     l(value);
+//   },
+//   error: err => l(err.message),
+//   complete: () => l('completed')
+// });
 
-// 2. Crator functions
+// setTimeout(() => {
+//   subscription.unsubscribe();
+// }, 1000);
+
+// 2. Creator functions
 
 // const observable$ = of(1, [2, 3], 'four', {five: 5, six: 'six'});
 
@@ -51,7 +52,11 @@ setTimeout(() => {
 
 // const observable$ = fromEvent(document.querySelector('#range1'), 'input');
 
-// observable$.subscribe(value => l(value))
+// const observable$ = interval(1000);
+// const observable$ = timer(3000);
+
+// observable$.pipe(take(5)).subscribe(value => l(value), null, () => l('complete'))
+
 
 // 3. Hot vs Cold observable
 
@@ -96,12 +101,12 @@ setTimeout(() => {
 // const behSubject = new BehaviorSubject(1);
 
 // behSubject.subscribe(val => l(`Sub 1: ${val}`));
-// behSubject.subscribe(val => l(`Sub 2: ${val}`));
+// behSubject.pipe(take(1)).subscribe(val => l(`Sub 2: ${val}`), null, ()=> l('complete'));
 
 // behSubject.next(2);
 // behSubject.next(3);
 
-// l(behSubject.value)
+// l(behSubject.value);
 
 // behSubject.asObservable().subscribe(val => l(`Sub 3: ${val}`));
 
@@ -112,14 +117,14 @@ setTimeout(() => {
 
 // 4.3 Replay Subjects
 
-// const replaySubject = new ReplaySubject(4);
+const replaySubject = new ReplaySubject(4);
 
-// replaySubject.next(1);
-// replaySubject.next(2);
-// replaySubject.next(3);
-// replaySubject.next(4);
-// replaySubject.next(5);
+replaySubject.next(1);
+replaySubject.next(2);
+replaySubject.next(3);
+replaySubject.next(4);
+replaySubject.next(5);
 
-// replaySubject.subscribe(val => l(`Sub: ${val}`));
+replaySubject.subscribe(val => l(`Sub: ${val}`));
 
-// replaySubject.complete();
+replaySubject.complete();
